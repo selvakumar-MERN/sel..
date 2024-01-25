@@ -1,0 +1,57 @@
+ if($request->From_date==NULL&&$request->To_date==NULL){
+            
+            if($request->status=='0'){
+                 
+                return view('welcome',['list'=>Table::all()]);
+
+            }
+            else{
+
+                $data= Table::where('status','=',$request->status)->get();
+                return view('welcome',['list'=>$data]);
+            }
+
+            
+        }
+        elseif($request->From_date!=NULL&&$request->To_date!=NULL&&$request->status=='0'){
+          
+            $start = Carbon::parse($request->From_date);
+            $end = Carbon::parse($request->To_date);
+
+           
+
+            $get_all_user = Table::whereDate('date','<=',$end->format('y-m-d'))
+            ->whereDate('date','>=',$start->format('y-m-d'))->get();
+            return view('welcome',['list'=>$get_all_user]);
+
+
+        }
+        elseif($request->From_date!=NULL&&$request->To_date!=NULL&&$request->status!='0'){
+           
+            $start = Carbon::parse($request->From_date);
+            $end = Carbon::parse($request->To_date);
+
+            $get_all_user = Table::whereDate('date','<=',$end->format('y-m-d'))
+            ->whereDate('date','>=',$start->format('y-m-d'))->get();
+               
+            $query=$get_all_user->where('status','=',intval($request->status));
+           
+
+            /* ->where('status','=',$request->status)->get(); */
+            return view('welcome',['list'=>$query]);
+
+
+        }
+        else{
+           /*  $request->validate([
+                'From_date'=>'required|date',
+                'To_date'=>'required|date'
+            ]); */
+
+            return redirect('/')->with('message','Pleae select two dates');
+        }
+
+        
+
+        
+      
